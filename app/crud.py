@@ -1,39 +1,39 @@
-from app.models import MotionDataModel  # importa tu modelo de datos
-from pymongo.collection import Collection
+# ...existing code...
+from app.models import MotionDataModel
+from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import List, Optional
 from bson import ObjectId
 
 # CREATE
-def create_motion(collection: Collection, data: MotionDataModel) -> dict:
-    # Insertamos el nuevo documento a la colección
-    result = collection.insert_one(data.dict(by_alias=True))
+async def create_motion(collection: AsyncIOMotorCollection, data: MotionDataModel) -> dict:
+    result = await collection.insert_one(data.dict(by_alias=True))
     return {"inserted_id": str(result.inserted_id)}
 
 # READ - Obtener todos
-def get_all_motions(collection: Collection) -> List[MotionDataModel]:
+async def get_all_motions(collection: AsyncIOMotorCollection) -> List[MotionDataModel]:
     motions = []
-    for doc in collection.find():
-        doc["_id"] = str(doc["_id"])  # Convertir ObjectId a string
+    async for doc in collection.find():
+        doc["_id"] = str(doc["_id"])
         motions.append(MotionDataModel(**doc))
     return motions
 
 # READ - Obtener uno por ID
-def get_motion_by_id(collection: Collection, id: str) -> Optional[MotionDataModel]:
-    doc = collection.find_one({"_id": ObjectId(id)})
+async def get_motion_by_id(collection: AsyncIOMotorCollection, id: str) -> Optional[MotionDataModel]:
+    doc = await collection.find_one({"_id": ObjectId(id)})
     if doc:
         doc["_id"] = str(doc["_id"])
         return MotionDataModel(**doc)
     return None
 
 # UPDATE
-def update_motion(collection: Collection, id: str, data: dict) -> bool:
-    result = collection.update_one(
+async def update_motion(collection: AsyncIOMotorCollection, id: str, data: dict) -> bool:
+    result = await collection.update_one(
         {"_id": ObjectId(id)},
         {"$set": data}
     )
     return result.modified_count > 0
 
 # DELETE
-def delete_motion(collection: Collection, id: str) -> bool:
-    result = collection.delete_one({"_id": ObjectId(id)})
+async def delete_motion(collection: AsyncIOMotorCollection, id: str) -> bool:
+    result = await collection.delete_one({"_id": ObjectId(id)})
     return result.deleted_count > 0
