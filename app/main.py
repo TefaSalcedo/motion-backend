@@ -64,8 +64,6 @@ async def update_motion(id: str, data: MotionUpdateModel):
     motion["_id"] = str(motion["_id"])
     return motion
 
-
-
 # DELETE
 @app.delete("/motions/{id}", response_model=dict)
 async def delete_motion(id: str):
