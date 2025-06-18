@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import get_database  # usa la función para obtener la db
+from app.database import get_database 
 from app.models import MotionDataModel
 from app.models import MotionCreateModel
 from app.models import MotionUpdateModel
@@ -52,15 +52,13 @@ async def create_motion(data: MotionCreateModel):
 @app.put("/motions/{id}", response_model=dict)
 async def update_motion(id: str, data: MotionUpdateModel):
     updated = await crud.update_motion(
-        get_database()["motions"], 
-        id, 
-        data.dict(exclude_unset=True))
+                get_database()["motions"], 
+                id, 
+                data.dict(exclude_unset=True))
     
     motion = await get_database()["motions"].find_one({"_id": ObjectId(id)})
-    
     if not motion:
         raise HTTPException(status_code=404, detail="Motion not found")
-    
     motion["_id"] = str(motion["_id"])
     return motion
 

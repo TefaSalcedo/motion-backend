@@ -1,11 +1,11 @@
 # ...existing code...
-from app.models import MotionDataModel
+from app.models import MotionDataModel, MotionCreateModel
 from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import List, Optional
 from bson import ObjectId
 
 # CREATE
-async def create_motion(collection: AsyncIOMotorCollection, data: MotionDataModel) -> dict:
+async def create_motion(collection: AsyncIOMotorCollection, data: MotionCreateModel) -> dict:
     result = await collection.insert_one(data.dict(by_alias=True))
     return {"inserted_id": str(result.inserted_id)}
 
